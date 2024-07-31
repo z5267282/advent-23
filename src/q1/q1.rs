@@ -2,7 +2,8 @@ use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::fs::read_to_string;
 
-const FILE_PATH: &str = "src/q1/input.txt";
+// const FILE_PATH: &str = "src/q1/input.txt";
+const FILE_PATH: &str = "src/q1/small.txt";
 
 pub fn solve() -> Option<u32> {
     let contents = read_to_string(FILE_PATH).ok()?;
@@ -47,6 +48,7 @@ pub fn _part_2(contents: String) -> i32 {
     // last occuring
     let mut right = HashMap::<i32, usize>::new();
     for line in contents.lines() {
+        println!("line : {line}");
         (0..=100).for_each(|i| {
             if let Some(word) = words.get(&i) {
                 if let Some(idx) = line.find(word) {
@@ -92,6 +94,7 @@ pub fn _part_2(contents: String) -> i32 {
             let l = first.first().unwrap_or(&(0, 0));
             let (li, _) = l;
             result += *li;
+            println!("  {fi},{li}");
         })
     }
     result
