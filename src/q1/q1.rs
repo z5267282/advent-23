@@ -31,16 +31,20 @@ pub fn part_2() {
 }
 
 pub fn _part_2(contents: String) -> i32 {
-    let mut i = 1;
+    let mut j = 1;
     let mut words = HashMap::<i32, String>::new();
     [
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
     ]
     .iter()
     .for_each(|word| {
-        words.insert(i, word.to_string());
-        i += 1;
+        words.insert(j, word.to_string());
+        j += 1;
     });
+
+    for (word, number) in words.iter() {
+        println!("{word}={number}");
+    }
 
     let mut result = 0;
     // first occuring index for the value
