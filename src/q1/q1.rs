@@ -45,75 +45,57 @@ pub mod part_2 {
         }
     }
 
-    fn solve(contents: String) -> i32 {
-        let words = gen_word_mapping();
-        let mut result = 0;
-        // first occuring index for the value
-        for line in contents.lines() {
-            (0..=100).for_each(|i| {
-                let mut left = HashMap::<i32, usize>::new();
-                // last occuring
-                let mut right = HashMap::<i32, usize>::new();
-                if let Some(word) = words.get(&i) {
-                    if let Some(idx) = line.find(word) {
-                        left.entry(i)
-                            .and_modify(|pos| *pos = min(*pos, idx))
-                            .or_insert(idx);
-                    }
-                }
-                if let Some(word) = words.get(&i) {
-                    if let Some(idx) = line.rfind(word) {
-                        right
-                            .entry(i)
-                            .and_modify(|pos| *pos = max(*pos, idx))
-                            .or_insert(idx);
-                    }
-                }
-                let word = i.to_string();
-                if let Some(idx) = line.find(&word) {
-                    left.entry(i)
-                        .and_modify(|pos| *pos = min(*pos, idx))
-                        .or_insert(idx);
-                }
-                if let Some(idx) = line.rfind(&word) {
-                    right
-                        .entry(i)
-                        .and_modify(|pos| *pos = max(*pos, idx))
-                        .or_insert(idx);
-                }
-                let mut first = left
-                    .iter()
-                    .map(|(i, idx)| (*i, *idx))
-                    .collect::<Vec<(i32, usize)>>();
-                first.sort_by(|(_, b), (_, d)| b.cmp(d));
-                let f = first.first().unwrap_or(&(0, 0));
-                let (fi, _) = f;
-                result += *fi;
+    /*
+    find the first and last occurences of all numbers
+    string should be considered as numeric counterpart except 0
 
-                let mut last = right
-                    .iter()
-                    .map(|(i, idx)| (*i, *idx))
-                    .collect::<Vec<(i32, usize)>>();
-                last.sort_by(|(a, _), (c, _)| c.cmp(a));
-                let l = first.first().unwrap_or(&(0, 0));
-                let (li, _) = l;
-                result += *li;
-            })
+    */
+    fn solve(contents: String) -> i32 {
+        let words = HashMap::<i32, &str>::from([
+            (1, "one"),
+            (2, "two"),
+            (3, "three"),
+            (4, "four"),
+            (5, "five"),
+            (6, "six"),
+            (7, "seven"),
+            (8, "eight"),
+            (9, "nine"),
+        ]);
+        for line in contents.lines() {
+            let (mut left, mut right) =
+                (HashMap::<i32, usize>::new(), HashMap::<i32, usize>::new());
+            // handle 0 case
+            left_find(0, line, "0", &mut left);
+            right_find(0, line, "0", &mut right);
+            for (number, word) in words.iter() {
+                // word
+                left_find(*number, line, word, &mut left);
+                right_find(*number, line, word, &mut right);
+
+                // number
+                let stringified_number = number.to_string();
+                left_find(*number, line, &stringified_number, &mut left);
+                right_find(*number, line, &stringified_number, &mut right);
+            }
         }
-        result
+        0
     }
 
-    fn gen_word_mapping() -> HashMap<i32, String> {
-        let mut j = 1;
-        let mut words = HashMap::<i32, String>::new();
-        [
-            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-        ]
-        .iter()
-        .for_each(|word| {
-            words.insert(j, word.to_string());
-            j += 1;
-        });
-        words
+    fn left_find(number: i32, line: &str, word: &str, left: &mut HashMap<i32, usize>) {
+        if let Some(idx) = line.find(word) {
+            left.entry(number)
+                .and_modify(|pos| *pos = min(*pos, idx))
+                .or_insert(idx);
+        }
+    }
+
+    fn right_find(number: i32, line: &str, word: &str, right: &mut HashMap<i32, usize>) {
+        if let Some(idx) = line.rfind(word) {
+            right
+                .entry(number)
+                .and_modify(|pos| *pos = max(*pos, idx))
+                .or_insert(idx);
+        }
     }
 }
