@@ -1,6 +1,6 @@
 use std::fs::read_to_string;
 
-const FILE_PATH: &str = "src/q1/small.txt";
+const FILE_PATH: &str = "src/q1/input.txt";
 
 fn open_file() -> Option<String> {
     read_to_string(FILE_PATH).ok()
