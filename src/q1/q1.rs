@@ -1,6 +1,6 @@
 use std::fs::read_to_string;
 
-const FILE_PATH: &str = "src/q1/one.txt";
+const FILE_PATH: &str = "src/q1/small.txt";
 
 fn open_file() -> Option<String> {
     read_to_string(FILE_PATH).ok()
@@ -33,7 +33,7 @@ pub mod part_1 {
 
 #[allow(unused)]
 pub mod part_2 {
-    use std::cmp::{max, min};
+    use std::cmp::{max, max_by_key, min, min_by_key};
     use std::collections::HashMap;
 
     use super::open_file;
@@ -62,6 +62,7 @@ pub mod part_2 {
             (8, "eight"),
             (9, "nine"),
         ]);
+        let mut result = 0;
         for line in contents.lines() {
             let (mut left, mut right) =
                 (HashMap::<i32, usize>::new(), HashMap::<i32, usize>::new());
@@ -78,8 +79,24 @@ pub mod part_2 {
                 left_find(*number, line, &stringified_number, &mut left);
                 right_find(*number, line, &stringified_number, &mut right);
             }
+
+            let (tens, _) = left
+                .iter()
+                .fold(None, |old, (a, b)| match old {
+                    None => Some((a, b)),
+                    Some((c, d)) => Some(min_by_key((c, d), (a, b), |(_, idx)| *idx)),
+                })
+                .unwrap_or((&0, &0));
+            let (ones, _) = right
+                .iter()
+                .fold(None, |old, (a, b)| match old {
+                    None => Some((a, b)),
+                    Some((c, d)) => Some(max_by_key((c, d), (a, b), |(_, idx)| *idx)),
+                })
+                .unwrap_or((&0, &0));
+            result += 10 * tens + ones;
         }
-        0
+        result
     }
 
     fn left_find(number: i32, line: &str, word: &str, left: &mut HashMap<i32, usize>) {
