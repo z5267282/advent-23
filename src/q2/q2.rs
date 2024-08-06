@@ -1,5 +1,5 @@
-// const FILE: &str = "src/q2/input.txt";
-const FILE: &str = "src/q2/small.txt";
+const FILE: &str = "src/q2/input.txt";
+// const FILE: &str = "src/q2/small.txt";
 
 #[allow(unused)]
 pub mod part_1 {
