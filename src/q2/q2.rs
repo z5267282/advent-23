@@ -1,5 +1,7 @@
-const FILE: &str = "src/q2/input.txt";
+// const FILE: &str = "src/q2/input.txt";
+const FILE: &str = "src/q2/small.txt";
 
+#[allow(unused)]
 pub mod part_1 {
     use std::cmp::max;
     use std::collections::HashMap;
@@ -61,5 +63,50 @@ pub mod part_1 {
                 Some(limit) => amount <= limit,
                 None => false,
             })
+    }
+}
+
+#[allow(unused)]
+pub mod part_2 {
+    use std::cmp::max;
+    use std::collections::HashMap;
+    use std::fs::read_to_string;
+
+    use super::FILE;
+
+    pub fn run() {
+        match read_to_string(FILE).ok() {
+            None => println!("could not open {FILE}"),
+            Some(contents) => println!("{}", solve(contents)),
+        };
+    }
+
+    fn solve(contents: String) -> i32 {
+        let mut result = 0;
+        for line in contents.lines() {
+            if let Some((_, simulations)) = line.split_once(": ") {
+                result += calc_power(simulations);
+            }
+        }
+        result
+    }
+
+    /**
+     * 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+     * gives back
+     * blue=6 * red=4 * green=2 = 48
+     */
+    fn calc_power(simulations: &str) -> i32 {
+        let mut colours = HashMap::<&str, i32>::from([("red", 0), ("green", 0), ("blue", 0)]);
+        for round in simulations.split("; ") {
+            for combo in round.split(", ") {
+                if let Some((number, colour)) = combo.split_once(" ") {
+                    if let Some(parsed) = number.parse::<i32>().ok() {
+                        colours.entry(colour).and_modify(|e| *e = max(*e, parsed));
+                    }
+                }
+            }
+        }
+        colours.iter().map(|(_, val)| *val).product()
     }
 }
