@@ -1,0 +1,45 @@
+467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..
+
+467 + 35 + 633 + 617 + 592 + 755 + 664 + 598 = 4361
+
+plan:
+1. find all numbers
+2. search around
+
+012
+
+467..114.. 0
+...*...... 1
+..35..633. 2
+
+eg 35 grid[0][1:3]
+
+for non-numeric, non .
+
+search:
+grid[1][0:4]
+
+.----... 1
+.-35-.633. 2
+ ----
+
+simplest way to do this:
+2d array
++ annoying to deal with unpacking
+
+alternate:
+fixed key data structure
+set of where symbols are
+(1, 0) -> 
+
+extract numbers:
+simply split on all except 
