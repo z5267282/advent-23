@@ -72,14 +72,15 @@ pub mod part_1 {
     fn find_numbers(map: &str) -> Vec<(u32, (usize, usize, usize))> {
         let mut result = Vec::<(u32, (usize, usize, usize))>::new();
         for (i, line) in map.lines().enumerate() {
-            // optionally store (start, total, last power of 10), then use pow to calculate
-            let mut last: Option<(usize, u32, u32)> = None;
+            // optionally store (start, digits in order)
+            // reverse digits, then calculate powers in bases
+            let mut last: Option<(usize, Vec<u32>)> = None;
             for (j, chr) in line.chars().enumerate() {
                 match chr.to_digit(10) {
                     None => {
                         match last {
                             // end of a number
-                            Some((old, total, _)) => {
+                            Some((old, digits, _)) => {
                                 result.push((total, (i, old, j)));
                                 dbg!(i, j);
                                 last = None;
@@ -111,6 +112,21 @@ pub mod part_1 {
             }
         }
         result
+    }
+
+    fn base_10_number(digits: &[u32]) -> u32 {
+        digits
+            .iter()
+            .rev()
+            .enumerate()
+            // cheat and use as
+            .map(|(i, digit)| u32::pow(10, i as u32))
+            .sum()
+    }
+
+    #[test]
+    fn test_base_10() {
+        assert_eq!(base_10_number(&[1, 2, 3]), 123)
     }
 
     #[test]
