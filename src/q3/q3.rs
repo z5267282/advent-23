@@ -79,7 +79,11 @@ pub mod part_1 {
                     None => {
                         match last {
                             // end of a number
-                            Some((old, total, _)) => result.push((total, (i, old, j))),
+                            Some((old, total, _)) => {
+                                result.push((total, (i, old, j)));
+                                dbg!(i, j);
+                                last = None;
+                            }
                             // continuation of no number
                             None => continue,
                         }
@@ -90,10 +94,13 @@ pub mod part_1 {
                             None => last = Some((j, n, 0)),
                             // continuation of existing number
                             Some((old, total, power)) => {
-                                let (totalled, powered) = (total + n.pow(power + 1), power + 1);
+                                dbg!(n, total);
+                                let (totalled, powered) =
+                                    (total + n * u32::pow(10, power + 1), power + 1);
                                 // last digit means we should add on the number
                                 if j == line.chars().count() - 1 {
                                     result.push((totalled, (i, old, j)));
+                                    dbg!(i, j);
                                 }
                                 last = Some((old, totalled, powered))
                             }
@@ -101,9 +108,6 @@ pub mod part_1 {
                         // end the old number
                     }
                 }
-            }
-            if let Some((old, total, _)) = last {
-                result.push((total, (i, old, line.chars().count() - 1)));
             }
         }
         result
