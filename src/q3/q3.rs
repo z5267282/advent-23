@@ -90,7 +90,7 @@ pub mod part_1 {
                             None => last = Some((j, n, 0)),
                             // continuation of existing number
                             Some((old, total, power)) => {
-                                last = Some((old, total + total.pow(power + 1), power + 1))
+                                last = Some((old, total + n.pow(power + 1), power + 1))
                             }
                         }
                         // end the old number
@@ -112,6 +112,12 @@ pub mod part_1 {
             find_symbols(map),
             HashSet::from(["0,1".to_string(), "1,2".to_string()])
         );
+    }
+
+    #[test]
+    fn test_find_numbers_small() {
+        let map = ".123..";
+        assert_eq!(find_numbers(map), vec![(123, (0, 1, 4))])
     }
 
     #[test]
