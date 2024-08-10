@@ -90,7 +90,12 @@ pub mod part_1 {
                             None => last = Some((j, n, 0)),
                             // continuation of existing number
                             Some((old, total, power)) => {
-                                last = Some((old, total + n.pow(power + 1), power + 1))
+                                let (totalled, powered) = (total + n.pow(power + 1), power + 1);
+                                // last digit means we should add on the number
+                                if j == line.chars().count() - 1 {
+                                    result.push((totalled, (i, old, j)));
+                                }
+                                last = Some((old, totalled, powered))
                             }
                         }
                         // end the old number
