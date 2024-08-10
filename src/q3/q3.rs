@@ -80,9 +80,8 @@ pub mod part_1 {
                     None => {
                         match last {
                             // end of a number
-                            Some((old, digits, _)) => {
-                                result.push((total, (i, old, j)));
-                                dbg!(i, j);
+                            Some((old, digits)) => {
+                                result.push((base_10_number(&digits), (i, old, j)));
                                 last = None;
                             }
                             // continuation of no number
@@ -92,18 +91,15 @@ pub mod part_1 {
                     Some(n) => {
                         match last {
                             // start of a new number
-                            None => last = Some((j, n, 0)),
+                            None => last = Some((j, vec![n])),
                             // continuation of existing number
-                            Some((old, total, power)) => {
-                                dbg!(n, total);
-                                let (totalled, powered) =
-                                    (total + n * u32::pow(10, power + 1), power + 1);
+                            Some((old, mut digits)) => {
                                 // last digit means we should add on the number
                                 if j == line.chars().count() - 1 {
-                                    result.push((totalled, (i, old, j)));
-                                    dbg!(i, j);
+                                    result.push((base_10_number(&digits), (i, old, j)));
                                 }
-                                last = Some((old, totalled, powered))
+                                digits.push(n);
+                                last = Some((old, digits));
                             }
                         }
                         // end the old number
@@ -120,7 +116,7 @@ pub mod part_1 {
             .rev()
             .enumerate()
             // cheat and use as
-            .map(|(i, digit)| u32::pow(10, i as u32))
+            .map(|(i, digit)| digit * u32::pow(10, i as u32))
             .sum()
     }
 
