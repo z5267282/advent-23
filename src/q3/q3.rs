@@ -73,6 +73,7 @@ pub mod part_1 {
         let mut result = Vec::<(u32, (usize, usize, usize))>::new();
         for (i, line) in map.lines().enumerate() {
             // optionally store (start, digits in order)
+            // the digits should be a u32 slice, but not sure how to unpack and concat these
             // reverse digits, then calculate powers in bases
             let mut last: Option<(usize, Vec<u32>)> = None;
             for (j, chr) in line.chars().enumerate() {
@@ -94,15 +95,16 @@ pub mod part_1 {
                             None => last = Some((j, vec![n])),
                             // continuation of existing number
                             Some((old, mut digits)) => {
-                                // last digit means we should add on the number
-                                if j == line.chars().count() - 1 {
-                                    result.push((base_10_number(&digits), (i, old, j)));
-                                }
                                 digits.push(n);
                                 last = Some((old, digits));
                             }
                         }
-                        // end the old number
+                        // last digit means we should add on the number
+                        if j == line.chars().count() - 1 {
+                            if let Some((old, digits)) = last {
+                                result.push((base_10_number(&digits), (i, old, j + 1)));
+                            }
+                        }
                     }
                 }
             }
@@ -148,6 +150,7 @@ pub mod part_1 {
 
         assert_eq!(
             find_numbers(map),
+            // TODO: fix indices
             vec![(123, (0, 1, 4)), (45, (1, 0, 1)), (6, (1, 4, 5))]
         )
     }
