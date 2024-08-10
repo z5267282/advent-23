@@ -32,13 +32,18 @@ pub mod part_1 {
         start: usize,
         end: usize,
     ) -> bool {
+        // TODO: fix underflow subtraction
+        // TODO: make col start from 0 too
         for j in start - 1..=end {
             // above
-            // below
-            for i in [row - 1, row + 1] {
-                if symbols.contains(&hash(i, j)) {
+            if row != 0 {
+                if symbols.contains(&hash(row - 1, j)) {
                     return true;
                 }
+            }
+            // below
+            if symbols.contains(&hash(row + 1, j)) {
+                return true;
             }
         }
         // left, right
