@@ -32,7 +32,7 @@ pub mod part_1 {
         start: usize,
         end: usize,
     ) -> bool {
-        for j in start - 1..=end + 1 {
+        for j in start - 1..=end {
             // above
             // below
             for i in [row - 1, row + 1] {
@@ -42,7 +42,7 @@ pub mod part_1 {
             }
         }
         // left, right
-        [start - 1, end + 1]
+        [start - 1, end]
             .iter()
             .any(|j| symbols.contains(&hash(row, *j)))
     }
@@ -100,11 +100,11 @@ pub mod part_1 {
                             }
                         }
                         // last digit means we should add on the number
-                        // if j == line.chars().count() - 1 {
-                        //     if let Some((old, digits)) = last {
-                        //         result.push((base_10_number(&digits), (i, old, j + 1)));
-                        //     }
-                        // }
+                        if j == line.chars().count() - 1 {
+                            if let Some((old, ref digits)) = last {
+                                result.push((base_10_number(digits), (i, old, j + 1)));
+                            }
+                        }
                     }
                 }
             }
@@ -151,7 +151,7 @@ pub mod part_1 {
         assert_eq!(
             find_numbers(map),
             // TODO: fix indices
-            vec![(123, (0, 1, 4)), (45, (1, 0, 2)), (6, (1, 4, 6))]
+            vec![(123, (0, 1, 4)), (45, (1, 0, 2)), (6, (1, 4, 5))]
         )
     }
 }
