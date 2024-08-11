@@ -25,6 +25,12 @@ pub mod part_1 {
             .sum()
     }
 
+    /**
+     *
+     * -----
+     * -l  r
+     * -----
+     */
     fn is_adjacdent(
         symbols: &HashSet<String>,
         n: u32,
@@ -32,24 +38,51 @@ pub mod part_1 {
         start: usize,
         end: usize,
     ) -> bool {
-        // TODO: fix underflow subtraction
-        // TODO: make col start from 0 too
-        for j in start - 1..=end {
-            // above
-            if row != 0 {
+        // we must be very careful to not create a negative number from a usize
+
+        // above
+        // check cols start ... end to avoid overflow
+        if row > 0 {
+            for j in start..=end {
                 if symbols.contains(&hash(row - 1, j)) {
                     return true;
                 }
             }
-            // below
+        }
+        // below
+        for j in start..=end {
             if symbols.contains(&hash(row + 1, j)) {
                 return true;
             }
         }
-        // left, right
-        [start - 1, end]
-            .iter()
-            .any(|j| symbols.contains(&hash(row, *j)))
+
+        // left column
+        if start > 0 {
+            if row > 0 {
+                if symbols.contains(&hash(row - 1, start - 1)) {
+                    return true;
+                }
+            }
+
+            if symbols.contains(&hash(row, start - 1))
+                || symbols.contains(&hash(row + 1, start - 1))
+            {
+                return true;
+            }
+        }
+
+        // right column
+        if row > 0 {
+            if symbols.contains(&hash(row - 1, start + 1)) {
+                return true;
+            }
+        }
+
+        if symbols.contains(&hash(row, start + 1)) || symbols.contains(&hash(row + 1, start + 1)) {
+            return true;
+        }
+
+        false
     }
 
     fn hash(row: usize, col: usize) -> String {
