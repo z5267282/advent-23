@@ -4,6 +4,10 @@ from dataclasses import dataclass
 FILE = "input.txt"
 
 
+def main():
+    part_2()
+
+
 @dataclass
 class Number:
     row: int
@@ -12,7 +16,7 @@ class Number:
     value: int
 
 
-def main():
+def part_1():
     with open(FILE, "r") as f:
         map = f.read().splitlines()
 
@@ -41,6 +45,27 @@ def main():
     print(f"answer : {result}")
 
 
+def part_2():
+    """map:
+    "x,y" -> number,
+    so
+    123 -> {"0,0" : 123, "0,1" : 123, "0,2" : 123}
+    for all '*', check if there is an adjacdent number"""
+
+    with open(FILE, "r") as f:
+        map = f.read().splitlines()
+
+    numbers: dict[str, int] = dict()
+    # preprocessing
+    for row, line in enumerate(map):
+        # numbers
+        for number in re.finditer(r"[0-9]+", line):
+            start, end = number.span()
+            value = int(number.group(0))
+            for col in range(start, end):
+                numbers[myhash(row, col)] = value
+
+
 def myhash(x: int, y: int) -> str:
     return f"{x},{y}"
 
@@ -55,6 +80,11 @@ def is_adjacent(symbols: set[str], number: Number) -> bool:
     left = myhash(number.row, number.start - 1)
     right = myhash(number.row, number.end)
     return left in symbols or right in symbols
+
+
+def adjacdent_numbers(row: int, col: int, numbers: dict[str, int]) -> list[int]:
+    result: list[int] = []
+    return result
 
 
 if __name__ == "__main__":
