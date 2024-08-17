@@ -59,7 +59,7 @@ def part_2():
     for all '*', check if there is an adjacdent number"""
 
     with open(FILE, "r") as f:
-        result = solve_part_2(f.read())
+        result = solve_part_2(f.read().splitlines())
         print(f"answer : {result}")
 
 
@@ -79,22 +79,9 @@ def is_adjacent(symbols: set[str], number: Number) -> bool:
     return left in symbols or right in symbols
 
 
-def solve_part_2(raw: str) -> int:
-    map = raw.splitlines()
-    locations: dict[str, int] = dict()
-    numbers: list[int] = []
+def solve_part_2(map: list[str]) -> int:
+    locations, numbers = preprocess(map)
 
-    # preprocessing
-    for row, line in enumerate(map):
-        # numbers
-        for number in re.finditer(r"[0-9]+", line):
-            start, end = number.span()
-            value = int(number.group(0))
-            for col in range(start, end):
-                locations[myhash(row, col)] = len(numbers)
-            numbers.append(value)
-
-    print(len(numbers))
     result = 0
     # asterisks
     for row, line in enumerate(map):
@@ -109,19 +96,37 @@ def solve_part_2(raw: str) -> int:
     return result
 
 
+def preprocess(map: list[str]) -> tuple[dict[str, int], list[int]]:
+    """Return locations, numbers"""
+    locations: dict[str, int] = dict()
+    numbers: list[int] = []
+
+    # preprocessing
+    for row, line in enumerate(map):
+        # numbers
+        for number in re.finditer(r"[0-9]+", line):
+            start, end = number.span()
+            value = int(number.group(0))
+            for col in range(start, end):
+                locations[myhash(row, col)] = len(numbers)
+            numbers.append(value)
+
+    return locations, numbers
+
+
 def adjacdent_numbers(row: int, col: int, locations: dict[str, int]) -> set[int]:
     """Find indices of all adjacdent numbers for a given position"""
     result: set[int] = set()
     offsets: list[tuple[int, int]] = [
         # above
-        (-1, -1), (-1, 0), (-1, 1),
+        (-1, -1), (0, -1), (1, -1),
         # left, right
-        (0, -1), (0, 1),
+        (-1, 0), (1, 0),
         # below
-        (1, -1), (1, 0), (1, 1)
+        (-1, 1), (0, 1), (1, 1)
     ]
     for offset in offsets:
-        dy, dx = offset
+        dx, dy = offset
         pos = myhash(col + dx, row + dy)
         if pos in locations:
             result.add(locations[pos])
@@ -139,23 +144,21 @@ def test_adjacdent_numbers():
 
 
 def test_part_2_small():
-    map = """467..114..
-...*......
-..35..633.
-......#...
-617*......
-.....+.58.
-..592.....
-......755.
-...$.*....
-.664.598.."""
-    assert (map.splitlines()[1][3] == "*")
-    # just put in 467 and 35
-    assert adjacdent_numbers(1, 3, {
-        "0,0": 0, "1,0": 0, "2,0": 0,
-        "2,2": 2, "3,2": 2
-    }) == set([0, 2])
-    assert solve_part_2(map) == 467835
+    map = ["467..114..",
+           "...*......",
+           "..35..633.",
+           "......#...",
+           "617*......",
+           ".....+.58.",
+           "..592.....",
+           "......755.",
+           "...$.*....",
+           ".664.598.."]
+    locations, numbers = preprocess(map)
+    print(locations)
+    assert (map[1][3] == "*")
+    assert adjacdent_numbers(1, 3, locations) == set([0, 2])
+    # assert solve_part_2(map) == 467835
 
 
 if __name__ == "__main__":
