@@ -90,7 +90,6 @@ def solve_part_2(map: list[str]) -> int:
                 adj = adjacdent_numbers(row, col, locations)
                 if len(adj) == 2:
                     a, b = list(adj)
-                    print(f"{a}, {b} | {numbers[a]}, {numbers[b]}")
                     result += numbers[a] * numbers[b]
 
     return result
@@ -108,7 +107,7 @@ def preprocess(map: list[str]) -> tuple[dict[str, int], list[int]]:
             start, end = number.span()
             value = int(number.group(0))
             for col in range(start, end):
-                locations[myhash(row, col)] = len(numbers)
+                locations[myhash(col, row)] = len(numbers)
             numbers.append(value)
 
     return locations, numbers
@@ -154,11 +153,10 @@ def test_part_2_small():
            "......755.",
            "...$.*....",
            ".664.598.."]
-    locations, numbers = preprocess(map)
-    print(locations)
+    locations, _ = preprocess(map)
     assert (map[1][3] == "*")
     assert adjacdent_numbers(1, 3, locations) == set([0, 2])
-    # assert solve_part_2(map) == 467835
+    assert solve_part_2(map) == 467835
 
 
 if __name__ == "__main__":
