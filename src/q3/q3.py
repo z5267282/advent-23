@@ -1,6 +1,8 @@
 import re
 from dataclasses import dataclass
 
+import pytest
+
 FILE = "input.txt"
 
 
@@ -49,13 +51,23 @@ def part_2():
     """map:
     "x,y" -> number,
     so
-    123 -> {"0,0" : 123, "0,1" : 123, "0,2" : 123}
+    123 -> {"0,0" : 0, "0,1" : 0, "0,2" : 0}
+    too annoying to identify unique numbers, instead we can do this
+    [123]
+     0
+    so we store indices of numbers, then maintain a unique set of these
     for all '*', check if there is an adjacdent number"""
 
     with open(FILE, "r") as f:
-        map = f.read().splitlines()
+        result = solve_part_2(f.read())
+        print(f"answer : {result}")
 
-    numbers: dict[str, int] = dict()
+
+def solve_part_2(raw: str) -> int:
+    map = raw.splitlines()
+    locations: dict[str, int] = dict()
+    numbers: list[int] = []
+
     # preprocessing
     for row, line in enumerate(map):
         # numbers
@@ -63,7 +75,22 @@ def part_2():
             start, end = number.span()
             value = int(number.group(0))
             for col in range(start, end):
-                numbers[myhash(row, col)] = value
+                locations[myhash(row, col)] = len(numbers)
+            numbers.append(value)
+
+    print(len(numbers))
+    result = 0
+    # asterisks
+    for row, line in enumerate(map):
+        for col, chr in enumerate(line):
+            if chr == "*":
+                adj = adjacdent_numbers(row, col, locations)
+                if len(adj) == 2:
+                    a, b = list(adj)
+                    print(f"{a}, {b} | {numbers[a]}, {numbers[b]}")
+                    result += numbers[a] * numbers[b]
+
+    return result
 
 
 def myhash(x: int, y: int) -> str:
@@ -82,9 +109,47 @@ def is_adjacent(symbols: set[str], number: Number) -> bool:
     return left in symbols or right in symbols
 
 
-def adjacdent_numbers(row: int, col: int, numbers: dict[str, int]) -> list[int]:
-    result: list[int] = []
+def adjacdent_numbers(row: int, col: int, locations: dict[str, int]) -> set[int]:
+    """Find indices of all adjacdent numbers for a given position"""
+    result: set[int] = set()
+    offsets: list[tuple[int, int]] = [
+        # above
+        (-1, -1), (-1, 0), (-1, 1),
+        # left, right
+        (0, -1), (0, 1),
+        # below
+        (1, -1), (1, 0), (1, 1)
+    ]
+    for offset in offsets:
+        dy, dx = offset
+        pos = myhash(col + dx, row + dy)
+        if pos in locations:
+            result.add(locations[pos])
+
     return result
+
+
+def test_adjacdent_numbers():
+    indices = adjacdent_numbers(1, 1, {
+        "0,0": 0, "1,0": 1, "2,0": 2,
+        "0,1": 3, "2,1": 4,
+        "0,2": 5, "1,2": 6, "2,2": 7
+    })
+    assert indices == set([i for i in range(8)])
+
+
+def test_part_2_small():
+    map = """467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598.."""
+    assert solve_part_2(map) == 467835
 
 
 if __name__ == "__main__":
