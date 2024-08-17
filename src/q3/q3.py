@@ -63,6 +63,22 @@ def part_2():
         print(f"answer : {result}")
 
 
+def myhash(x: int, y: int) -> str:
+    return f"{x},{y}"
+
+
+def is_adjacent(symbols: set[str], number: Number) -> bool:
+    for j in range(number.start - 1, number.end + 1):
+        above = myhash(number.row - 1, j)
+        below = myhash(number.row + 1, j)
+        if above in symbols or below in symbols:
+            return True
+
+    left = myhash(number.row, number.start - 1)
+    right = myhash(number.row, number.end)
+    return left in symbols or right in symbols
+
+
 def solve_part_2(raw: str) -> int:
     map = raw.splitlines()
     locations: dict[str, int] = dict()
@@ -91,22 +107,6 @@ def solve_part_2(raw: str) -> int:
                     result += numbers[a] * numbers[b]
 
     return result
-
-
-def myhash(x: int, y: int) -> str:
-    return f"{x},{y}"
-
-
-def is_adjacent(symbols: set[str], number: Number) -> bool:
-    for j in range(number.start - 1, number.end + 1):
-        above = myhash(number.row - 1, j)
-        below = myhash(number.row + 1, j)
-        if above in symbols or below in symbols:
-            return True
-
-    left = myhash(number.row, number.start - 1)
-    right = myhash(number.row, number.end)
-    return left in symbols or right in symbols
 
 
 def adjacdent_numbers(row: int, col: int, locations: dict[str, int]) -> set[int]:
@@ -149,6 +149,12 @@ def test_part_2_small():
 ......755.
 ...$.*....
 .664.598.."""
+    assert (map.splitlines()[1][3] == "*")
+    # just put in 467 and 35
+    assert adjacdent_numbers(1, 3, {
+        "0,0": 0, "1,0": 0, "2,0": 0,
+        "2,2": 2, "3,2": 2
+    }) == set([0, 2])
     assert solve_part_2(map) == 467835
 
 
