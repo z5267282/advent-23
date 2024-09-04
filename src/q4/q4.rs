@@ -26,6 +26,8 @@ pub mod part_1 {
                         .filter_map(|raw| raw.parse::<u32>().ok())
                         .collect::<HashSet<u32>>();
                     // probably a smart way to do this with iterator chains
+                    // first card wort0h 2^0 (so start on -1)
+                    // can't start on -1 due to u32, so just divide final answer by 2
                     let mut common = 0;
                     for h in right.split_ascii_whitespace() {
                         match h.parse::<u32>().ok() {
@@ -37,7 +39,7 @@ pub mod part_1 {
                             }
                         }
                     }
-                    2u32.pow(common)
+                    2u32.pow(common) / 2
                 }
             },
         }
