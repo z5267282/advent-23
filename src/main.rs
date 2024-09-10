@@ -12,5 +12,6 @@ fn main() {
 
     // q3::q3::part_1::run();
 
-    q4::q4::part_1::run();
+    // q4::q4::part_1::run();
+    q4::q4::part_2::run();
 }
