@@ -1,3 +1,4 @@
+#[allow(unused)]
 pub mod part_1 {
     const FILE: &str = "src/q4/input.txt";
 
@@ -43,5 +44,22 @@ pub mod part_1 {
                 }
             },
         }
+    }
+}
+
+#[allow(unused)]
+pub mod part_2 {
+    use std::collections::HashMap;
+
+    // card number -> number of matches
+    // then need to know how many times a card appears
+    // this is iteratively based on number of matches
+    // use queue to process this
+
+    // matches: card -> no
+    pub fn solve(matches: HashMap<u32, u32>) -> u32 {
+        let mut copies = HashMap::<u32, u32>::new();
+
+        todo!()
     }
 }
